@@ -1,0 +1,118 @@
+[gd_scene load_steps=15 format=3 uid="uid://dhmcchxwscna2"]
+
+[ext_resource type="Script" path="res://world.gd" id="1_y82a8"]
+[ext_resource type="PackedScene" uid="uid://cywlto4wavxy4" path="res://player.tscn" id="2_16m8d"]
+[ext_resource type="PackedScene" uid="uid://bh7qj8me3m1g" path="res://patty.tscn" id="3_7b8mu"]
+[ext_resource type="PackedScene" uid="uid://cpx47g642cxuq" path="res://burger.tscn" id="4_8tc1m"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_tf6gs"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_24hma"]
+sky_material = SubResource("ProceduralSkyMaterial_tf6gs")
+
+[sub_resource type="Environment" id="Environment_pvcvo"]
+background_mode = 2
+sky = SubResource("Sky_24hma")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ips4a"]
+size = Vector3(0.9, 0.4, 0.9)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r3uh1"]
+resource_local_to_scene = true
+albedo_color = Color(0.968627, 0.447059, 0.517647, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6q3jl"]
+resource_local_to_scene = true
+size = Vector3(0.4, 0.1, 0.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_lvruc"]
+resource_local_to_scene = true
+size = Vector3(0.75, 0.25, 0.75)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_smeng"]
+resource_local_to_scene = true
+size = Vector3(0.7, 0.5, 0.7)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xfiao"]
+resource_local_to_scene = true
+albedo_color = Color(0.545098, 0.270588, 0.0745098, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_ae0ke"]
+resource_local_to_scene = true
+size = Vector3(0.5, 0.1, 0.5)
+
+[node name="World" type="Node3D"]
+script = ExtResource("1_y82a8")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_pvcvo")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+shadow_enabled = true
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+use_collision = true
+size = Vector3(20, 1, 20)
+
+[node name="Cut" type="CSGBox3D" parent="CSGBox3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+operation = 2
+size = Vector3(19.99, 0.9, 19.99)
+
+[node name="Player" parent="." instance=ExtResource("2_16m8d")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+
+[node name="SpotLight3D" type="SpotLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 15, 0)
+light_energy = 12.0
+spot_range = 1e+12
+spot_angle = 90.0
+
+[node name="Totally Real Grilll" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0, -5)
+use_collision = true
+size = Vector3(1.5, 1, 1.5)
+
+[node name="Cut" type="CSGBox3D" parent="Totally Real Grilll"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+operation = 2
+size = Vector3(1, 0.5, 1)
+
+[node name="Stovetop" type="Area3D" parent="Totally Real Grilll"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Totally Real Grilll/Stovetop"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+shape = SubResource("BoxShape3D_ips4a")
+
+[node name="Patty" parent="." instance=ExtResource("3_7b8mu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
+
+[node name="MeshInstance3D" parent="Patty" index="0"]
+material_override = SubResource("StandardMaterial3D_r3uh1")
+
+[node name="CollisionShape3D" parent="Patty/Connect Point (Bottom)" index="0"]
+shape = SubResource("BoxShape3D_6q3jl")
+
+[node name="Burger" parent="." instance=ExtResource("4_8tc1m")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -5)
+
+[node name="MeshInstance3D" parent="Burger" index="0"]
+mesh = SubResource("BoxMesh_lvruc")
+
+[node name="CollisionShape3D" parent="Burger/Connect Point (Top)" index="0"]
+shape = SubResource("BoxShape3D_smeng")
+
+[node name="Burger Patty" parent="Burger" index="3"]
+material_override = SubResource("StandardMaterial3D_xfiao")
+mesh = SubResource("BoxMesh_ae0ke")
+
+[connection signal="body_entered" from="Totally Real Grilll/Stovetop" to="." method="_on_stovetop_body_entered"]
+[connection signal="body_entered" from="Burger/Connect Point (Top)" to="." method="_on_connect_point_body_entered"]
+
+[editable path="Patty"]
+[editable path="Burger"]
