@@ -8,6 +8,16 @@ const JUMP_VELOCITY = 4.5
 @onready var burger = $/root/World/Burger
 @onready var patty = $/root/World/Patty
 @onready var burger_patty = $"/root/World/Burger/Burger Patty"
+@onready var lettuce = $"/root/World/Lettuce"
+@onready var cut_lettuce = $"/root/World/Burger/Cut Lettuce"
+@onready var tomato = $"/root/World/Tomato"
+@onready var cut_tomato = $"/root/World/Burger/Cut Tomato"
+@onready var cheese = $"/root/World/Cheese"
+@onready var cut_cheese = $"/root/World/Burger/Cut Cheese"
+@onready var ketchup_bottle = $"/root/World/Ketchup Bottle"
+@onready var ketchup = $"/root/World/Burger/Ketchup"
+@onready var top_bun = $"/root/World/Top Bun"
+@onready var burger_bun = $"/root/World/Burger/Top Bun"
 
 var picked_object
 var pull_power = 10
@@ -28,10 +38,30 @@ func _input(event):
 		if picked_object == null:
 			pick_object()
 		elif picked_object != null and collider != null and collider is RigidBody3D:
-			#if collider.food_cooked == true:
-				patty.queue_free()
-				burger_patty.show()
-		elif picked_object != null:
+			if picked_object == patty:
+				if picked_object.cooked_patty == true:
+					patty.queue_free()
+					burger_patty.show()
+			if picked_object == lettuce:
+				if picked_object.cutted_lettuce == true:
+					lettuce.queue_free()
+					cut_lettuce.show()
+			if picked_object == tomato:
+				if picked_object.cutted_tomato == true:
+					tomato.queue_free()
+					cut_tomato.show()
+			if picked_object == cheese:
+				if picked_object.cutted_cheese == true:
+					cheese.queue_free()
+					cut_cheese.show()
+			if picked_object == ketchup_bottle:
+				ketchup.show()
+			if picked_object == top_bun:
+				top_bun.queue_free()
+				burger_bun.show()
+		
+	if Input.is_action_just_pressed("right_click"):
+		if picked_object != null:
 			drop_object()
 
 func _physics_process(delta):
